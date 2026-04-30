@@ -1,0 +1,41 @@
+{
+  "App": {
+    "name": "HupSup POS",
+    "tagline": "All-in-one POS for small shops. Works offline. Supports LAK + THB."
+  },
+  "Nav": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "products": "Products",
+    "pos": "Point of Sale",
+    "reports": "Reports",
+    "settings": "Settings",
+    "signIn": "Sign in",
+    "signOut": "Sign out",
+    "language": "Language"
+  },
+  "Landing": {
+    "heroTitle": "A POS for small shops that works even without internet",
+    "heroSubtitle": "Sales, inventory, members, promotions, and reports — everything in one system. Built for shops in Laos and Thailand.",
+    "ctaPrimary": "Get started",
+    "ctaSecondary": "See features",
+    "features": {
+      "offline": {
+        "title": "Works offline",
+        "desc": "Keep selling when the internet drops. The app syncs automatically when it comes back."
+      },
+      "multiCurrency": {
+        "title": "LAK + THB in one bill",
+        "desc": "Accept both currencies in a single transaction with daily exchange rates."
+      },
+      "verticals": {
+        "title": "Multiple shop types",
+        "desc": "Retail, restaurant, and service businesses — one system for all."
+      },
+      "selfHost": {
+        "title": "Self-host on your VPS",
+        "desc": "No vendor lock-in. Own your data 100%."
+      }
+    }
+  }
+}

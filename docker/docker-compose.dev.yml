@@ -1,0 +1,26 @@
+# Local dev stack — only Postgres for now. The Next.js app runs on the host
+# via `pnpm dev`. Add MinIO / Mailhog later if needed.
+
+name: hupsup-pos-dev
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: hupsup-pos-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: hupsup
+      POSTGRES_PASSWORD: hupsup
+      POSTGRES_DB: hupsup_pos
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hupsup -d hupsup_pos"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres_data:
