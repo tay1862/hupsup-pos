@@ -55,6 +55,21 @@ export const roleEnum = pgEnum("role", [
 
 export const localeEnum = pgEnum("locale", ["th", "lo", "en"]);
 
+export const paymentMethodEnum = pgEnum("payment_method", [
+  "CASH",
+  "BCEL_QR",
+  "LDB_QR",
+  "JDB_QR",
+  "BANK_TRANSFER",
+  "OTHER",
+]);
+
+export const transactionStatusEnum = pgEnum("transaction_status", [
+  "COMPLETED",
+  "VOIDED",
+  "REFUNDED",
+]);
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Organizations (tenants)
 // ─────────────────────────────────────────────────────────────────────────────
@@ -247,6 +262,106 @@ export const products = pgTable(
 );
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Transactions (sales / receipts)
+// ─────────────────────────────────────────────────────────────────────────────
+//
+// Money is stored in LAK (the org base currency for Phase 1) using
+// numeric(18,4) so we never lose precision to JS floats. THB tendered is
+// recorded separately for receipt traceability — the conversion to LAK
+// happens at sale time using `exchangeRateThbToLak` (1 THB = X LAK), which
+// is also persisted on the row so historical receipts stay auditable.
+
+export const transactions = pgTable(
+  "transactions",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    orgId: uuid("org_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    branchId: uuid("branch_id")
+      .notNull()
+      .references(() => branches.id, { onDelete: "restrict" }),
+    cashierId: uuid("cashier_id").references(() => users.id, {
+      onDelete: "set null",
+    }),
+    receiptNo: text("receipt_no").notNull(),
+    status: transactionStatusEnum("status").notNull().default("COMPLETED"),
+    paymentMethod: paymentMethodEnum("payment_method")
+      .notNull()
+      .default("CASH"),
+    subtotalLak: numeric("subtotal_lak", { precision: 18, scale: 4 })
+      .notNull()
+      .default("0"),
+    discountLak: numeric("discount_lak", { precision: 18, scale: 4 })
+      .notNull()
+      .default("0"),
+    totalLak: numeric("total_lak", { precision: 18, scale: 4 })
+      .notNull()
+      .default("0"),
+    paidLak: numeric("paid_lak", { precision: 18, scale: 4 })
+      .notNull()
+      .default("0"),
+    paidThb: numeric("paid_thb", { precision: 18, scale: 4 })
+      .notNull()
+      .default("0"),
+    exchangeRateThbToLak: numeric("exchange_rate_thb_to_lak", {
+      precision: 18,
+      scale: 4,
+    })
+      .notNull()
+      .default("0"),
+    changeLak: numeric("change_lak", { precision: 18, scale: 4 })
+      .notNull()
+      .default("0"),
+    note: text("note"),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    index("transactions_org_created_idx").on(table.orgId, table.createdAt),
+    index("transactions_branch_created_idx").on(
+      table.branchId,
+      table.createdAt,
+    ),
+    uniqueIndex("transactions_org_receipt_idx").on(
+      table.orgId,
+      table.receiptNo,
+    ),
+  ],
+);
+
+export const transactionItems = pgTable(
+  "transaction_items",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    transactionId: uuid("transaction_id")
+      .notNull()
+      .references(() => transactions.id, { onDelete: "cascade" }),
+    productId: uuid("product_id").references(() => products.id, {
+      onDelete: "set null",
+    }),
+    sku: text("sku").notNull(),
+    name: text("name").notNull(),
+    unitLabel: text("unit_label").notNull(),
+    qty: numeric("qty", { precision: 18, scale: 4 }).notNull(),
+    unitPriceLak: numeric("unit_price_lak", {
+      precision: 18,
+      scale: 4,
+    }).notNull(),
+    lineTotalLak: numeric("line_total_lak", {
+      precision: 18,
+      scale: 4,
+    }).notNull(),
+    sortOrder: integer("sort_order").notNull().default(0),
+  },
+  (table) => [
+    index("transaction_items_tx_idx").on(table.transactionId),
+    index("transaction_items_product_idx").on(table.productId),
+  ],
+);
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Audit log (Phase 1: mutations against business-critical data)
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -285,7 +400,41 @@ export const organizationsRelations = relations(organizations, ({ many }) => ({
   memberships: many(memberships),
   categories: many(categories),
   products: many(products),
+  transactions: many(transactions),
 }));
+
+export const transactionsRelations = relations(
+  transactions,
+  ({ one, many }) => ({
+    org: one(organizations, {
+      fields: [transactions.orgId],
+      references: [organizations.id],
+    }),
+    branch: one(branches, {
+      fields: [transactions.branchId],
+      references: [branches.id],
+    }),
+    cashier: one(users, {
+      fields: [transactions.cashierId],
+      references: [users.id],
+    }),
+    items: many(transactionItems),
+  }),
+);
+
+export const transactionItemsRelations = relations(
+  transactionItems,
+  ({ one }) => ({
+    transaction: one(transactions, {
+      fields: [transactionItems.transactionId],
+      references: [transactions.id],
+    }),
+    product: one(products, {
+      fields: [transactionItems.productId],
+      references: [products.id],
+    }),
+  }),
+);
 
 export const categoriesRelations = relations(categories, ({ one, many }) => ({
   org: one(organizations, {
@@ -349,6 +498,13 @@ export type Category = typeof categories.$inferSelect;
 export type NewCategory = typeof categories.$inferInsert;
 export type Product = typeof products.$inferSelect;
 export type NewProduct = typeof products.$inferInsert;
+export type Transaction = typeof transactions.$inferSelect;
+export type NewTransaction = typeof transactions.$inferInsert;
+export type TransactionItem = typeof transactionItems.$inferSelect;
+export type NewTransactionItem = typeof transactionItems.$inferInsert;
+export type PaymentMethod = (typeof paymentMethodEnum.enumValues)[number];
+export type TransactionStatus =
+  (typeof transactionStatusEnum.enumValues)[number];
 export type AuditLog = typeof auditLogs.$inferSelect;
 export type Role = (typeof roleEnum.enumValues)[number];
 export type Locale = (typeof localeEnum.enumValues)[number];

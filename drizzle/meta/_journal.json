@@ -15,6 +15,13 @@
       "when": 1777964551956,
       "tag": "0001_fresh_whirlwind",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1777965713534,
+      "tag": "0002_fluffy_ravenous",
+      "breakpoints": true
     }
   ]
 }
