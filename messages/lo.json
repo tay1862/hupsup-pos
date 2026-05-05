@@ -12,6 +12,7 @@
     "settings": "ຕັ້ງຄ່າ",
     "signIn": "ເຂົ້າສູ່ລະບົບ",
     "signOut": "ອອກຈາກລະບົບ",
+    "register": "ສະໝັກໃຊ້ງານ",
     "language": "ພາສາ"
   },
   "Landing": {
@@ -36,6 +37,69 @@
         "title": "ຕິດຕັ້ງໄດ້ບົນ VPS ຂອງທ່ານເອງ",
         "desc": "ບໍ່ຜູກກັບ vendor ຄວບຄຸມຂໍ້ມູນໄດ້ 100%"
       }
+    }
+  },
+  "Auth": {
+    "signInTitle": "ເຂົ້າສູ່ລະບົບ",
+    "signInSubtitle": "ຍິນດີຕ້ອນຮັບກັບມາ — ໃສ່ອີເມວ ແລະ ລະຫັດຜ່ານຂອງທ່ານ",
+    "email": "ອີເມວ",
+    "password": "ລະຫັດຜ່ານ",
+    "submit": "ເຂົ້າສູ່ລະບົບ",
+    "submitting": "ກຳລັງເຂົ້າສູ່ລະບົບ...",
+    "noAccount": "ຍັງບໍ່ມີບັນຊີ?",
+    "registerLink": "ສະໝັກໃຊ້ງານທີ່ນີ້",
+    "haveAccount": "ມີບັນຊີຢູ່ແລ້ວ?",
+    "signInLink": "ເຂົ້າສູ່ລະບົບທີ່ນີ້",
+    "invalidCredentials": "ອີເມວ ຫຼື ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ",
+    "signOut": "ອອກຈາກລະບົບ"
+  },
+  "Register": {
+    "title": "ສະໝັກໃຊ້ງານ HupSup POS",
+    "subtitle": "ສ້າງຮ້ານ ແລະ ບັນຊີເຈົ້າຂອງໃນຂັ້ນຕອນດຽວ ໃຊ້ງານໄດ້ທັນທີ",
+    "orgSection": "ຂໍ້ມູນຮ້ານ",
+    "orgName": "ຊື່ຮ້ານ",
+    "orgNamePlaceholder": "ຕົວຢ່າງ ຮ້ານໄກ່ທອດສົມສັກ",
+    "businessType": "ປະເພດທຸລະກິດ",
+    "businessTypeRetail": "ຮ້ານຄ້າທົ່ວໄປ (ຄ້າປີກ)",
+    "businessTypeRestaurant": "ຮ້ານອາຫານ / ຄາເຟ່",
+    "businessTypeService": "ຮ້ານບໍລິການ",
+    "businessTypeMixed": "ປະສົມ",
+    "branchName": "ຊື່ສາຂາທຳອິດ",
+    "branchNamePlaceholder": "ຕົວຢ່າງ ສາຂາຫຼັກ",
+    "ownerSection": "ຂໍ້ມູນເຈົ້າຂອງບັນຊີ",
+    "ownerName": "ຊື່-ນາມສະກຸນ",
+    "ownerNamePlaceholder": "ຊື່-ນາມສະກຸນ",
+    "ownerEmail": "ອີເມວ",
+    "ownerEmailPlaceholder": "you@example.com",
+    "ownerPassword": "ລະຫັດຜ່ານ (ຢ່າງໜ້ອຍ 8 ຕົວອັກສອນ)",
+    "submit": "ສ້າງຮ້ານຂອງຂ້ອຍ",
+    "submitting": "ກຳລັງສ້າງ...",
+    "errors": {
+      "emailTaken": "ອີເມວນີ້ມີຜູ້ໃຊ້ແລ້ວ",
+      "invalidInput": "ຂໍ້ມູນທີ່ໃສ່ບໍ່ຖືກຕ້ອງ ກະລຸນາກວດສອບອີກຄັ້ງ",
+      "internal": "ເກີດຂໍ້ຜິດພາດຂອງລະບົບ ກະລຸນາລອງໃໝ່"
+    }
+  },
+  "Dashboard": {
+    "title": "ແດັດບອດ",
+    "welcome": "ຍິນດີຕ້ອນຮັບ {name}",
+    "orgLabel": "ຮ້ານ",
+    "branchLabel": "ສາຂາ",
+    "roleLabel": "ບົດບາດ",
+    "comingSoon": "ຄຸນສົມບັດຂາຍໜ້າຮ້ານ ສະຕັອກ ແລະ ລາຍງານ ຈະເປີດໃຊ້ງານໃນໄວໆນີ້",
+    "navOverview": "ພາບລວມ",
+    "navProducts": "ສິນຄ້າ",
+    "navPos": "ຂາຍໜ້າຮ້ານ",
+    "navReports": "ລາຍງານ",
+    "navSettings": "ຕັ້ງຄ່າ",
+    "roles": {
+      "OWNER": "ເຈົ້າຂອງ",
+      "MANAGER": "ຜູ້ຈັດການ",
+      "CASHIER": "ແຄຊເຊຍ",
+      "WAITER": "ພະນັກງານເສີບ",
+      "KITCHEN": "ຄົວ",
+      "STOCK": "ສະຕັອກ",
+      "ACCOUNTANT": "ບັນຊີ"
     }
   }
 }

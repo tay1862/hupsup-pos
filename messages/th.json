@@ -12,6 +12,7 @@
     "settings": "ตั้งค่า",
     "signIn": "เข้าสู่ระบบ",
     "signOut": "ออกจากระบบ",
+    "register": "สมัครใช้งาน",
     "language": "ภาษา"
   },
   "Landing": {
@@ -36,6 +37,69 @@
         "title": "ติดตั้งได้บน VPS ของคุณเอง",
         "desc": "ไม่ผูกกับ vendor ควบคุมข้อมูลได้ 100%"
       }
+    }
+  },
+  "Auth": {
+    "signInTitle": "เข้าสู่ระบบ",
+    "signInSubtitle": "ยินดีต้อนรับกลับ — กรอกอีเมลและรหัสผ่านของคุณ",
+    "email": "อีเมล",
+    "password": "รหัสผ่าน",
+    "submit": "เข้าสู่ระบบ",
+    "submitting": "กำลังเข้าสู่ระบบ...",
+    "noAccount": "ยังไม่มีบัญชี?",
+    "registerLink": "สมัครใช้งานที่นี่",
+    "haveAccount": "มีบัญชีอยู่แล้ว?",
+    "signInLink": "เข้าสู่ระบบที่นี่",
+    "invalidCredentials": "อีเมลหรือรหัสผ่านไม่ถูกต้อง",
+    "signOut": "ออกจากระบบ"
+  },
+  "Register": {
+    "title": "สมัครใช้งาน HupSup POS",
+    "subtitle": "สร้างร้านและบัญชีเจ้าของในขั้นตอนเดียว ใช้งานได้ทันที",
+    "orgSection": "ข้อมูลร้าน",
+    "orgName": "ชื่อร้าน",
+    "orgNamePlaceholder": "เช่น ร้านไก่ทอดสมศักดิ์",
+    "businessType": "ประเภทธุรกิจ",
+    "businessTypeRetail": "ร้านค้าทั่วไป (ค้าปลีก)",
+    "businessTypeRestaurant": "ร้านอาหาร / คาเฟ่",
+    "businessTypeService": "ร้านบริการ",
+    "businessTypeMixed": "ผสม",
+    "branchName": "ชื่อสาขาแรก",
+    "branchNamePlaceholder": "เช่น สาขาหลัก",
+    "ownerSection": "ข้อมูลเจ้าของบัญชี",
+    "ownerName": "ชื่อ-นามสกุล",
+    "ownerNamePlaceholder": "ชื่อ-นามสกุล",
+    "ownerEmail": "อีเมล",
+    "ownerEmailPlaceholder": "you@example.com",
+    "ownerPassword": "รหัสผ่าน (อย่างน้อย 8 ตัวอักษร)",
+    "submit": "สร้างร้านของฉัน",
+    "submitting": "กำลังสร้าง...",
+    "errors": {
+      "emailTaken": "อีเมลนี้มีผู้ใช้แล้ว",
+      "invalidInput": "ข้อมูลที่กรอกไม่ถูกต้อง กรุณาตรวจสอบอีกครั้ง",
+      "internal": "เกิดข้อผิดพลาดของระบบ กรุณาลองใหม่"
+    }
+  },
+  "Dashboard": {
+    "title": "แดชบอร์ด",
+    "welcome": "ยินดีต้อนรับ {name}",
+    "orgLabel": "ร้าน",
+    "branchLabel": "สาขา",
+    "roleLabel": "บทบาท",
+    "comingSoon": "ฟีเจอร์ขายหน้าร้าน สต็อก และรายงาน จะเปิดใช้งานในเร็วๆ นี้",
+    "navOverview": "ภาพรวม",
+    "navProducts": "สินค้า",
+    "navPos": "ขายหน้าร้าน",
+    "navReports": "รายงาน",
+    "navSettings": "ตั้งค่า",
+    "roles": {
+      "OWNER": "เจ้าของ",
+      "MANAGER": "ผู้จัดการ",
+      "CASHIER": "แคชเชียร์",
+      "WAITER": "พนักงานเสิร์ฟ",
+      "KITCHEN": "ครัว",
+      "STOCK": "สต็อก",
+      "ACCOUNTANT": "บัญชี"
     }
   }
 }
