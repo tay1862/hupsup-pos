@@ -16,6 +16,13 @@ import { Card, CardBody } from "@/components/ui/card";
 import { formatMoney } from "@/lib/utils";
 import { PrintButton } from "./print-button";
 
+// RFC 4122 UUID (any version). Used to short-circuit malformed receipt IDs
+// (e.g. corrupted bookmarks, hand-edited URLs) before they hit Postgres,
+// where they would otherwise raise `invalid input syntax for type uuid`
+// and surface as a 500 instead of a 404.
+const UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export default async function ReceiptPage({
   params,
 }: {
@@ -25,6 +32,8 @@ export default async function ReceiptPage({
   setRequestLocale(locale);
   const t = await getTranslations("Receipt");
   const session = await requireActiveSession();
+
+  if (!UUID_RE.test(id)) notFound();
 
   const [tx] = await db
     .select({
