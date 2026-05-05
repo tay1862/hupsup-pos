@@ -172,5 +172,63 @@
         "internal": "ເກີດຂໍ້ຜິດພາດຂອງລະບົບ"
       }
     }
+  },
+  "Pos": {
+    "title": "ຂາຍໜ້າຮ້ານ",
+    "subtitle": "ບັນທຶກການຂາຍ ແລະ ພິມໃບເກັບເງິນ",
+    "searchPlaceholder": "ຄົ້ນຫາດ້ວຍ SKU ຫຼື ຊື່ສິນຄ້າ...",
+    "allCategories": "ທັງໝົດ",
+    "noProducts": "ບໍ່ພົບສິນຄ້າຕາມການຄົ້ນຫາ",
+    "cartTitle": "ຕະກ້າ",
+    "cartEmpty": "ເລືອກສິນຄ້າຈາກດ້ານຊ້າຍເພື່ອເລີ່ມການຂາຍ",
+    "clearCart": "ລ້າງ",
+    "removeLine": "ລຶບ",
+    "subtotal": "ຍອດກ່ອນສ່ວນຫຼຸດ",
+    "discount": "ສ່ວນຫຼຸດ",
+    "total": "ຍອດລວມ",
+    "exchangeRate": "1 ບາດ = ? ກີບ",
+    "paymentMethod": "ວິທີຊຳລະເງິນ",
+    "paidLak": "ຮັບ (ກີບ)",
+    "paidThb": "ຮັບ (ບາດ)",
+    "tendered": "ຮັບລວມ (ກີບ)",
+    "change": "ເງິນທອນ",
+    "note": "ໝາຍເຫດ (ບໍ່ບັງຄັບ)",
+    "checkout": "ປິດບິນ",
+    "checkingOut": "ກຳລັງບັນທຶກ...",
+    "paymentMethods": {
+      "CASH": "ເງິນສົດ",
+      "BCEL_QR": "BCEL OnePay (QR)",
+      "LDB_QR": "LDB QR",
+      "JDB_QR": "JDB QR",
+      "BANK_TRANSFER": "ໂອນເງິນ",
+      "OTHER": "ອື່ນໆ"
+    },
+    "errors": {
+      "empty_cart": "ຕ້ອງເພີ່ມສິນຄ້າຢ່າງໜ້ອຍ 1 ລາຍການ",
+      "underpaid": "ເງິນທີ່ຮັບໜ້ອຍກວ່າຍອດລວມ",
+      "invalid_input": "ຂໍ້ມູນບໍ່ຖືກຕ້ອງ ກະລຸນາກວດສອບ",
+      "internal": "ມີຄວາມຜິດພາດ ກະລຸນາລອງໃໝ່"
+    }
+  },
+  "Receipt": {
+    "backToPos": "← ກັບໄປໜ້າຂາຍ",
+    "print": "ພິມ",
+    "newSale": "ຂາຍລາຍການໃໝ່",
+    "receiptNo": "ເລກທີໃບເກັບເງິນ",
+    "date": "ວັນທີ",
+    "cashier": "ຜູ້ຂາຍ",
+    "paymentMethod": "ວິທີຊຳລະ",
+    "item": "ລາຍການ",
+    "qty": "ຈຳນວນ",
+    "price": "ລາຄາ",
+    "line": "ລວມ",
+    "subtotal": "ຍອດກ່ອນສ່ວນຫຼຸດ",
+    "discount": "ສ່ວນຫຼຸດ",
+    "total": "ຍອດລວມ",
+    "paidLak": "ຮັບ (ກີບ)",
+    "paidThb": "ຮັບ (ບາດ)",
+    "change": "ເງິນທອນ",
+    "note": "ໝາຍເຫດ",
+    "thankYou": "ຂອບໃຈທີ່ໃຊ້ບໍລິການ"
   }
 }

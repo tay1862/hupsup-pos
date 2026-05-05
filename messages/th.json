@@ -172,5 +172,63 @@
         "internal": "เกิดข้อผิดพลาดของระบบ"
       }
     }
+  },
+  "Pos": {
+    "title": "ขายหน้าร้าน",
+    "subtitle": "ทำรายการขายและพิมพ์ใบเสร็จ",
+    "searchPlaceholder": "ค้นหาด้วย SKU หรือชื่อสินค้า...",
+    "allCategories": "ทั้งหมด",
+    "noProducts": "ไม่พบสินค้าตามที่ค้นหา",
+    "cartTitle": "ตะกร้า",
+    "cartEmpty": "เลือกสินค้าด้านซ้ายเพื่อเริ่มขาย",
+    "clearCart": "ล้าง",
+    "removeLine": "ลบ",
+    "subtotal": "รวมก่อนส่วนลด",
+    "discount": "ส่วนลด",
+    "total": "ยอดรวม",
+    "exchangeRate": "1 บาท = ? กีบ",
+    "paymentMethod": "วิธีชำระเงิน",
+    "paidLak": "รับ (กีบ)",
+    "paidThb": "รับ (บาท)",
+    "tendered": "รวมที่รับ (กีบ)",
+    "change": "เงินทอน",
+    "note": "หมายเหตุ (ไม่บังคับ)",
+    "checkout": "ปิดบิล",
+    "checkingOut": "กำลังบันทึก...",
+    "paymentMethods": {
+      "CASH": "เงินสด",
+      "BCEL_QR": "BCEL OnePay (QR)",
+      "LDB_QR": "LDB QR",
+      "JDB_QR": "JDB QR",
+      "BANK_TRANSFER": "โอนเข้าบัญชี",
+      "OTHER": "อื่นๆ"
+    },
+    "errors": {
+      "empty_cart": "ต้องเพิ่มสินค้าอย่างน้อย 1 รายการในตะกร้า",
+      "underpaid": "เงินที่รับน้อยกว่ายอดรวม",
+      "invalid_input": "ข้อมูลที่กรอกไม่ถูกต้อง โปรดตรวจสอบ",
+      "internal": "เกิดข้อผิดพลาด โปรดลองใหม่"
+    }
+  },
+  "Receipt": {
+    "backToPos": "← กลับไปหน้าขาย",
+    "print": "พิมพ์",
+    "newSale": "ขายรายการใหม่",
+    "receiptNo": "เลขที่ใบเสร็จ",
+    "date": "วันที่",
+    "cashier": "แคชเชียร์",
+    "paymentMethod": "วิธีชำระ",
+    "item": "รายการ",
+    "qty": "จำนวน",
+    "price": "ราคา",
+    "line": "รวม",
+    "subtotal": "รวมก่อนส่วนลด",
+    "discount": "ส่วนลด",
+    "total": "ยอดรวม",
+    "paidLak": "รับ (กีบ)",
+    "paidThb": "รับ (บาท)",
+    "change": "เงินทอน",
+    "note": "หมายเหตุ",
+    "thankYou": "ขอบคุณที่ใช้บริการ"
   }
 }

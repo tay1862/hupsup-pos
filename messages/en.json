@@ -172,5 +172,63 @@
         "internal": "Something went wrong."
       }
     }
+  },
+  "Pos": {
+    "title": "Point of Sale",
+    "subtitle": "Ring up a sale and print or email a receipt.",
+    "searchPlaceholder": "Search by SKU or name...",
+    "allCategories": "All",
+    "noProducts": "No products match your search.",
+    "cartTitle": "Cart",
+    "cartEmpty": "Add products from the left to start a sale.",
+    "clearCart": "Clear",
+    "removeLine": "Remove",
+    "subtotal": "Subtotal",
+    "discount": "Discount",
+    "total": "Total",
+    "exchangeRate": "1 THB = ? LAK",
+    "paymentMethod": "Payment method",
+    "paidLak": "Paid (LAK)",
+    "paidThb": "Paid (THB)",
+    "tendered": "Tendered (LAK eq.)",
+    "change": "Change",
+    "note": "Note (optional)",
+    "checkout": "Checkout",
+    "checkingOut": "Saving sale...",
+    "paymentMethods": {
+      "CASH": "Cash",
+      "BCEL_QR": "BCEL OnePay (QR)",
+      "LDB_QR": "LDB QR",
+      "JDB_QR": "JDB QR",
+      "BANK_TRANSFER": "Bank transfer",
+      "OTHER": "Other"
+    },
+    "errors": {
+      "empty_cart": "Add at least one product to the cart.",
+      "underpaid": "Tendered amount is less than the total.",
+      "invalid_input": "Some fields are invalid. Please check and try again.",
+      "internal": "Something went wrong. Please try again."
+    }
+  },
+  "Receipt": {
+    "backToPos": "← Back to POS",
+    "print": "Print",
+    "newSale": "New sale",
+    "receiptNo": "Receipt no.",
+    "date": "Date",
+    "cashier": "Cashier",
+    "paymentMethod": "Payment",
+    "item": "Item",
+    "qty": "Qty",
+    "price": "Price",
+    "line": "Total",
+    "subtotal": "Subtotal",
+    "discount": "Discount",
+    "total": "Total",
+    "paidLak": "Paid (LAK)",
+    "paidThb": "Paid (THB)",
+    "change": "Change",
+    "note": "Note",
+    "thankYou": "Thank you for your purchase!"
   }
 }
