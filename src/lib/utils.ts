@@ -14,7 +14,7 @@ export function cn(...classes: Array<string | false | null | undefined>) {
 export function slugify(input: string): string {
   const trimmed = input.trim().toLowerCase();
   const latin = trimmed
-    .replace(/[^\p{L}\p{N}\s-]+/gu, "")
+    .replace(/[^\p{L}\p{M}\p{N}\s-]+/gu, "")
     .replace(/\s+/g, "-")
     .replace(/-+/g, "-")
     .replace(/^-|-$/g, "");

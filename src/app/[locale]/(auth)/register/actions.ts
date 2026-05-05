@@ -3,6 +3,7 @@
 import { z } from "zod";
 import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
+import { AuthError } from "next-auth";
 import { db } from "@/db";
 import {
   branches,
@@ -150,10 +151,22 @@ export async function registerAction(
   }
 
   // Sign the new owner in immediately so they land on /dashboard authenticated.
-  await signIn("credentials", {
-    email: data.ownerEmail,
-    password: data.ownerPassword,
-    redirectTo: "/dashboard",
-  });
-  return {};
+  // signIn throws NEXT_REDIRECT on success (we re-throw to propagate); an
+  // AuthError here means the account was created but auto-sign-in failed, in
+  // which case we surface a generic error rather than a raw 500 — the user can
+  // sign in manually.
+  try {
+    await signIn("credentials", {
+      email: data.ownerEmail,
+      password: data.ownerPassword,
+      redirectTo: "/dashboard",
+    });
+    return {};
+  } catch (err) {
+    if (err instanceof AuthError) {
+      console.error("[register] auto-signin failed", err);
+      return { error: "internal" };
+    }
+    throw err;
+  }
 }
