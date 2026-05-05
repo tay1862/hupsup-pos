@@ -89,6 +89,7 @@
     "comingSoon": "POS, inventory, and reports are coming soon.",
     "navOverview": "Overview",
     "navProducts": "Products",
+    "navCategories": "Categories",
     "navPos": "Point of Sale",
     "navReports": "Reports",
     "navSettings": "Settings",
@@ -100,6 +101,76 @@
       "KITCHEN": "Kitchen",
       "STOCK": "Stock",
       "ACCOUNTANT": "Accountant"
+    }
+  },
+  "Catalog": {
+    "products": {
+      "title": "Products",
+      "subtitle": "Manage your products and services.",
+      "addButton": "Add product",
+      "empty": "No products yet — click \"Add product\" to get started.",
+      "columns": {
+        "sku": "SKU",
+        "name": "Name",
+        "category": "Category",
+        "sellPrice": "Sell price",
+        "stock": "Stock",
+        "actions": "Actions"
+      },
+      "actions": {
+        "edit": "Edit",
+        "delete": "Delete",
+        "deleteConfirm": "Delete this product?"
+      },
+      "form": {
+        "createTitle": "Add product",
+        "editTitle": "Edit product",
+        "back": "← Back",
+        "sku": "SKU",
+        "skuHint": "Unique identifier for this product in your shop.",
+        "barcode": "Barcode (optional)",
+        "name": "Name",
+        "namePlaceholder": "e.g. Bottled water 600ml",
+        "description": "Description",
+        "category": "Category",
+        "categoryNone": "— No category —",
+        "unitLabel": "Unit",
+        "unitPlaceholder": "e.g. piece, kg, bottle",
+        "currency": "Currency",
+        "costPrice": "Cost price",
+        "sellPrice": "Sell price",
+        "trackStock": "Track stock",
+        "stockOnHand": "Stock on hand",
+        "isActive": "Active",
+        "submitCreate": "Save product",
+        "submitUpdate": "Update product",
+        "submitting": "Saving...",
+        "errors": {
+          "skuTaken": "This SKU is already in use.",
+          "barcodeTaken": "This barcode is already in use.",
+          "invalidInput": "Some fields are invalid. Please check and try again.",
+          "internal": "Something went wrong. Please try again.",
+          "notFound": "Product not found."
+        }
+      }
+    },
+    "categories": {
+      "title": "Categories",
+      "subtitle": "Group products to make them easier to find.",
+      "empty": "No categories yet — add one below.",
+      "addTitle": "Add category",
+      "name": "Name",
+      "namePlaceholder": "e.g. Drinks",
+      "description": "Description",
+      "submit": "Add",
+      "submitting": "Adding...",
+      "delete": "Delete",
+      "deleteConfirm": "Delete this category?",
+      "errors": {
+        "nameTaken": "A category with this name already exists.",
+        "invalidInput": "Some fields are invalid.",
+        "internal": "Something went wrong."
+      }
     }
   }
 }

@@ -19,6 +19,8 @@ import {
   index,
   uniqueIndex,
   primaryKey,
+  numeric,
+  integer,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
@@ -168,6 +170,83 @@ export const memberships = pgTable(
 );
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Categories — product groups, scoped per org
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const categories = pgTable(
+  "categories",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    orgId: uuid("org_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    description: text("description"),
+    sortOrder: integer("sort_order").notNull().default(0),
+    isActive: boolean("is_active").notNull().default(true),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    index("categories_org_idx").on(table.orgId),
+    uniqueIndex("categories_org_name_idx").on(table.orgId, table.name),
+  ],
+);
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Products — sellable items (retail goods, restaurant menu items, services)
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const products = pgTable(
+  "products",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    orgId: uuid("org_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    categoryId: uuid("category_id").references(() => categories.id, {
+      onDelete: "set null",
+    }),
+    sku: text("sku").notNull(),
+    barcode: text("barcode"),
+    name: text("name").notNull(),
+    description: text("description"),
+    /** Free-form unit label, e.g. "piece", "kg", "ໂຫລ", "ຂວດ". */
+    unitLabel: text("unit_label").notNull().default("piece"),
+    /** Cost price in the listed currency, stored as numeric(18,4). */
+    costPrice: numeric("cost_price", { precision: 18, scale: 4 })
+      .notNull()
+      .default("0"),
+    sellPrice: numeric("sell_price", { precision: 18, scale: 4 })
+      .notNull()
+      .default("0"),
+    currency: text("currency").notNull().default("LAK"),
+    trackStock: boolean("track_stock").notNull().default(false),
+    /** Approximate stock level (single-branch MVP). Multi-branch stock comes later. */
+    stockOnHand: numeric("stock_on_hand", { precision: 18, scale: 4 })
+      .notNull()
+      .default("0"),
+    isActive: boolean("is_active").notNull().default(true),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    index("products_org_idx").on(table.orgId),
+    uniqueIndex("products_org_sku_idx").on(table.orgId, table.sku),
+    uniqueIndex("products_org_barcode_idx").on(table.orgId, table.barcode),
+    index("products_category_idx").on(table.categoryId),
+  ],
+);
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Audit log (Phase 1: mutations against business-critical data)
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -204,6 +283,27 @@ export const auditLogs = pgTable(
 export const organizationsRelations = relations(organizations, ({ many }) => ({
   branches: many(branches),
   memberships: many(memberships),
+  categories: many(categories),
+  products: many(products),
+}));
+
+export const categoriesRelations = relations(categories, ({ one, many }) => ({
+  org: one(organizations, {
+    fields: [categories.orgId],
+    references: [organizations.id],
+  }),
+  products: many(products),
+}));
+
+export const productsRelations = relations(products, ({ one }) => ({
+  org: one(organizations, {
+    fields: [products.orgId],
+    references: [organizations.id],
+  }),
+  category: one(categories, {
+    fields: [products.categoryId],
+    references: [categories.id],
+  }),
 }));
 
 export const branchesRelations = relations(branches, ({ one, many }) => ({
@@ -245,6 +345,10 @@ export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
 export type Membership = typeof memberships.$inferSelect;
 export type NewMembership = typeof memberships.$inferInsert;
+export type Category = typeof categories.$inferSelect;
+export type NewCategory = typeof categories.$inferInsert;
+export type Product = typeof products.$inferSelect;
+export type NewProduct = typeof products.$inferInsert;
 export type AuditLog = typeof auditLogs.$inferSelect;
 export type Role = (typeof roleEnum.enumValues)[number];
 export type Locale = (typeof localeEnum.enumValues)[number];

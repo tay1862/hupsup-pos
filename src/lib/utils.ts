@@ -27,6 +27,25 @@ export function slugify(input: string): string {
 /**
  * Generate a short unique suffix to append to slugs when collisions occur.
  */
+/**
+ * Format a money amount (string from Drizzle numeric column or number)
+ * with thousands separators and trims trailing zeros after the decimal point.
+ * Always treats the value as numeric — never as floating-point arithmetic.
+ */
+export function formatMoney(
+  value: string | number | null | undefined,
+  currency = "LAK",
+): string {
+  if (value === null || value === undefined || value === "") return "-";
+  const num = typeof value === "number" ? value : Number(value);
+  if (Number.isNaN(num)) return String(value);
+  const formatted = num.toLocaleString("en-US", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 4,
+  });
+  return `${formatted} ${currency}`;
+}
+
 export function randomSuffix(length = 6): string {
   const alphabet = "abcdefghijklmnopqrstuvwxyz0123456789";
   let out = "";
