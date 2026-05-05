@@ -9,7 +9,11 @@ import { requireActiveSession } from "@/lib/session";
 import { add, compare, multiply, subtract, toLak } from "@/lib/money";
 import type { CheckoutSubmitState } from "./state";
 
-const decimal = z.string().regex(/^-?\d+(\.\d{1,4})?$/);
+// Money values arriving from the wire are always non-negative — discounts,
+// tendered cash, and exchange rates have no business being negative. The
+// regex enforces that on the server so a hand-crafted payload can't bypass
+// the underpaid check by sending e.g. a negative paidLak.
+const decimal = z.string().regex(/^\d+(\.\d{1,4})?$/);
 
 const lineSchema = z.object({
   productId: z.string().uuid(),
@@ -109,7 +113,11 @@ export async function checkoutAction(
     (acc, row) => add(acc, row.lineTotalLak),
     "0",
   );
-  const totalLak = subtract(subtotalLak, data.discountLak);
+  // Clamp total to zero when discount exceeds subtotal — mirrors the client
+  // (`pos-shell.tsx`) so the receipt and changeLak stay coherent. Without
+  // this, a discount > subtotal stores a negative total and inflates change.
+  const totalLakRaw = subtract(subtotalLak, data.discountLak);
+  const totalLak = compare(totalLakRaw, "0") < 0 ? "0" : totalLakRaw;
   const tenderedLak = add(
     data.paidLak,
     multiply(data.paidThb, data.exchangeRateThbToLak),

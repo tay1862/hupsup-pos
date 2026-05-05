@@ -15,7 +15,6 @@ import {
   subtract,
   toLak,
   toMoneyString,
-  toNumber,
 } from "@/lib/money";
 import { formatMoney } from "@/lib/utils";
 import { checkoutAction } from "./actions";
@@ -177,10 +176,10 @@ export function PosShell({
     startTransition(async () => {
       const result = await checkoutAction({
         paymentMethod,
-        paidLak: toMoneyString(toNumber(paidLak || "0")),
-        paidThb: toMoneyString(toNumber(paidThb || "0")),
-        exchangeRateThbToLak: toMoneyString(toNumber(exchangeRate || "0")),
-        discountLak: toMoneyString(toNumber(discountLak || "0")),
+        paidLak: toMoneyString(paidLak || "0"),
+        paidThb: toMoneyString(paidThb || "0"),
+        exchangeRateThbToLak: toMoneyString(exchangeRate || "0"),
+        discountLak: toMoneyString(discountLak || "0"),
         note: note.trim() || undefined,
         lines: cart.map((l) => ({ productId: l.productId, qty: l.qty })),
       });
