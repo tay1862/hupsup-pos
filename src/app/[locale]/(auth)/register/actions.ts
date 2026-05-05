@@ -24,6 +24,31 @@ const schema = z.object({
   ownerPassword: z.string().min(8).max(128),
 });
 
+/**
+ * Returns true if `err` is a Postgres unique-constraint violation
+ * (SQLSTATE 23505) against the named index/constraint. The check is loose by
+ * design — drivers expose the metadata in different shapes (`code`,
+ * `constraint`, `constraint_name`, message text), so we duck-type.
+ */
+function isUniqueViolation(err: unknown, indexName: string): boolean {
+  if (typeof err !== "object" || err === null) return false;
+  const e = err as {
+    code?: unknown;
+    constraint?: unknown;
+    constraint_name?: unknown;
+    message?: unknown;
+  };
+  const code = typeof e.code === "string" ? e.code : "";
+  if (code !== "23505") return false;
+  const constraint =
+    (typeof e.constraint === "string" && e.constraint) ||
+    (typeof e.constraint_name === "string" && e.constraint_name) ||
+    "";
+  if (constraint && constraint.includes(indexName)) return true;
+  const message = typeof e.message === "string" ? e.message : "";
+  return message.includes(indexName);
+}
+
 async function uniqueOrgSlug(name: string): Promise<string> {
   const base = slugify(name);
   for (let attempt = 0; attempt < 5; attempt += 1) {
@@ -114,6 +139,12 @@ export async function registerAction(
       });
     });
   } catch (err) {
+    // Catch the race where two concurrent registrations slip past the
+    // pre-check above and both try to insert the same email. Postgres surfaces
+    // unique-violation as SQLSTATE 23505.
+    if (isUniqueViolation(err, "users_email_idx")) {
+      return { error: "email_taken" };
+    }
     console.error("[register] transaction failed", err);
     return { error: "internal" };
   }

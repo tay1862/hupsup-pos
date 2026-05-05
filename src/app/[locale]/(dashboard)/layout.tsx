@@ -17,6 +17,7 @@ export default async function DashboardLayout({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
+  const tApp = await getTranslations("App");
   const session = await requireActiveSession();
   const [org] = await db
     .select({ name: organizations.name })
@@ -40,7 +41,7 @@ export default async function DashboardLayout({
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-3">
           <div className="flex items-center gap-3">
             <Link href="/dashboard" className="text-base font-semibold">
-              HupSup POS
+              {tApp("name")}
             </Link>
             <span className="text-foreground/40">·</span>
             <span className="text-foreground/70 text-sm">
