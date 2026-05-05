@@ -155,6 +155,7 @@ export async function checkoutAction(
 
       await tx.insert(transactionItems).values(
         itemRows.map((item) => ({
+          orgId: session.orgId,
           transactionId: newId,
           productId: item.productId,
           sku: item.sku,

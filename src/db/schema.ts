@@ -335,6 +335,13 @@ export const transactionItems = pgTable(
   "transaction_items",
   {
     id: uuid("id").primaryKey().defaultRandom(),
+    // Denormalised orgId for tenant isolation — AGENTS.md forbids
+    // org_id-less business tables. Mirrors the parent transaction's org so a
+    // direct query against transaction_items still gets a tenant filter
+    // without joining through transactions.
+    orgId: uuid("org_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
     transactionId: uuid("transaction_id")
       .notNull()
       .references(() => transactions.id, { onDelete: "cascade" }),
@@ -356,7 +363,7 @@ export const transactionItems = pgTable(
     sortOrder: integer("sort_order").notNull().default(0),
   },
   (table) => [
-    index("transaction_items_tx_idx").on(table.transactionId),
+    index("transaction_items_org_tx_idx").on(table.orgId, table.transactionId),
     index("transaction_items_product_idx").on(table.productId),
   ],
 );
@@ -425,6 +432,10 @@ export const transactionsRelations = relations(
 export const transactionItemsRelations = relations(
   transactionItems,
   ({ one }) => ({
+    org: one(organizations, {
+      fields: [transactionItems.orgId],
+      references: [organizations.id],
+    }),
     transaction: one(transactions, {
       fields: [transactionItems.transactionId],
       references: [transactions.id],
