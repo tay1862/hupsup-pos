@@ -20,7 +20,5 @@ export type CartLine = {
   unitPriceSrc: string;
   /** Original currency of the product line. */
   currency: string;
-  /** Computed unit price in LAK, snapshotted at add-to-cart time. */
-  unitPriceLak: string;
   qty: number;
 };

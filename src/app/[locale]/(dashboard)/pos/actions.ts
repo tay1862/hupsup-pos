@@ -50,7 +50,8 @@ export async function checkoutAction(
   payload: unknown,
 ): Promise<CheckoutSubmitState> {
   const session = await requireActiveSession();
-  if (!session.branchId) {
+  const branchId = session.branchId;
+  if (!branchId) {
     return { status: "error", error: "internal" };
   }
 
@@ -120,14 +121,14 @@ export async function checkoutAction(
 
   const receiptNo = generateReceiptNo();
 
-  let transactionId: string | undefined;
+  let transactionId: string;
   try {
-    await db.transaction(async (tx) => {
+    transactionId = await db.transaction(async (tx) => {
       const [row] = await tx
         .insert(transactions)
         .values({
           orgId: session.orgId,
-          branchId: session.branchId!,
+          branchId,
           cashierId: session.userId,
           receiptNo,
           status: "COMPLETED",
@@ -142,21 +143,22 @@ export async function checkoutAction(
           note: data.note ?? null,
         })
         .returning({ id: transactions.id });
-      transactionId = row.id;
+      const newId = row.id;
 
       await tx.insert(transactionItems).values(
-        itemRows.map((row) => ({
-          transactionId: transactionId!,
-          productId: row.productId,
-          sku: row.sku,
-          name: row.name,
-          unitLabel: row.unitLabel,
-          qty: row.qty,
-          unitPriceLak: row.unitPriceLak,
-          lineTotalLak: row.lineTotalLak,
-          sortOrder: row.sortOrder,
+        itemRows.map((item) => ({
+          transactionId: newId,
+          productId: item.productId,
+          sku: item.sku,
+          name: item.name,
+          unitLabel: item.unitLabel,
+          qty: item.qty,
+          unitPriceLak: item.unitPriceLak,
+          lineTotalLak: item.lineTotalLak,
+          sortOrder: item.sortOrder,
         })),
       );
+      return newId;
     });
   } catch (err) {
     console.error("[pos.checkout] failed", err);
@@ -167,6 +169,6 @@ export async function checkoutAction(
   revalidatePath("/dashboard");
   return {
     status: "success",
-    receiptUrl: `/pos/receipt/${transactionId!}`,
+    receiptUrl: `/pos/receipt/${transactionId}`,
   };
 }

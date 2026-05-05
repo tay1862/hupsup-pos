@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useCallback, useMemo, useState, useTransition } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
@@ -87,10 +87,23 @@ export function PosShell({
     });
   }, [products, search, activeCategoryId]);
 
+  // unitPriceLak is always derived from (unitPriceSrc, currency, exchangeRate)
+  // so changing the rate after adding items rewrites every cart total — and
+  // matches what the server will recompute at checkout (no client/server
+  // divergence).
+  const lineUnitPriceLak = useCallback(
+    (line: CartLine) =>
+      toLak(line.unitPriceSrc, line.currency, exchangeRate || "0"),
+    [exchangeRate],
+  );
+
   const subtotal = useMemo(
     () =>
-      cart.reduce((acc, l) => add(acc, multiply(l.unitPriceLak, l.qty)), "0"),
-    [cart],
+      cart.reduce(
+        (acc, l) => add(acc, multiply(lineUnitPriceLak(l), l.qty)),
+        "0",
+      ),
+    [cart, lineUnitPriceLak],
   );
   const total = useMemo(() => {
     const t = subtract(subtotal, discountLak || "0");
@@ -113,11 +126,6 @@ export function PosShell({
           l.productId === product.id ? { ...l, qty: l.qty + 1 } : l,
         );
       }
-      const unitPriceLak = toLak(
-        product.sellPrice,
-        product.currency,
-        exchangeRate || "0",
-      );
       return [
         ...current,
         {
@@ -127,7 +135,6 @@ export function PosShell({
           unitLabel: product.unitLabel,
           unitPriceSrc: product.sellPrice,
           currency: product.currency,
-          unitPriceLak,
           qty: 1,
         },
       ];
@@ -281,7 +288,7 @@ export function PosShell({
                     <div className="min-w-0">
                       <p className="text-sm font-medium">{line.name}</p>
                       <p className="text-foreground/60 text-xs">
-                        {formatMoney(line.unitPriceLak, "LAK")} ·{" "}
+                        {formatMoney(lineUnitPriceLak(line), "LAK")} ·{" "}
                         {line.unitLabel}
                       </p>
                     </div>
@@ -322,7 +329,7 @@ export function PosShell({
                     </div>
                     <span className="text-sm font-medium">
                       {formatMoney(
-                        multiply(line.unitPriceLak, line.qty),
+                        multiply(lineUnitPriceLak(line), line.qty),
                         "LAK",
                       )}
                     </span>
