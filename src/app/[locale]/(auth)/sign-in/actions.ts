@@ -5,7 +5,7 @@ import { AuthError } from "next-auth";
 import { signIn } from "@/lib/auth";
 
 const schema = z.object({
-  email: z.string().email(),
+  email: z.string().trim().toLowerCase().email(),
   password: z.string().min(8).max(128),
 });
 

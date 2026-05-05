@@ -17,7 +17,7 @@ import { db } from "@/db";
 import { memberships, users, type Role } from "@/db/schema";
 
 const credentialsSchema = z.object({
-  email: z.string().email(),
+  email: z.string().trim().toLowerCase().email(),
   password: z.string().min(8).max(128),
 });
 

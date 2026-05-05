@@ -38,7 +38,8 @@ export function SignInForm() {
           autoComplete="current-password"
         />
       </Field>
-      {state.error === "invalid_credentials" ? (
+      {state.error === "invalid_credentials" ||
+      state.error === "invalid_input" ? (
         <p className="text-sm text-red-600" role="alert">
           {t("invalidCredentials")}
         </p>
