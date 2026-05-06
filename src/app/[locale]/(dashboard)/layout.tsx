@@ -70,6 +70,7 @@ async function DashboardNav() {
   const items = [
     { href: "/dashboard", label: t("navOverview") },
     { href: "/products", label: t("navProducts") },
+    { href: "/categories", label: t("navCategories") },
     { href: "/pos", label: t("navPos") },
     { href: "/reports", label: t("navReports") },
     { href: "/settings", label: t("navSettings") },

@@ -8,6 +8,13 @@
       "when": 1777523003021,
       "tag": "0000_majestic_dakota_north",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1777964551956,
+      "tag": "0001_fresh_whirlwind",
+      "breakpoints": true
     }
   ]
 }

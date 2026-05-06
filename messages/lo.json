@@ -89,6 +89,7 @@
     "comingSoon": "ຄຸນສົມບັດຂາຍໜ້າຮ້ານ ສະຕັອກ ແລະ ລາຍງານ ຈະເປີດໃຊ້ງານໃນໄວໆນີ້",
     "navOverview": "ພາບລວມ",
     "navProducts": "ສິນຄ້າ",
+    "navCategories": "ໝວດໝູ່",
     "navPos": "ຂາຍໜ້າຮ້ານ",
     "navReports": "ລາຍງານ",
     "navSettings": "ຕັ້ງຄ່າ",
@@ -100,6 +101,76 @@
       "KITCHEN": "ຄົວ",
       "STOCK": "ສະຕັອກ",
       "ACCOUNTANT": "ບັນຊີ"
+    }
+  },
+  "Catalog": {
+    "products": {
+      "title": "ສິນຄ້າ",
+      "subtitle": "ຈັດການລາຍການສິນຄ້າ ແລະ ບໍລິການຂອງທ່ານ",
+      "addButton": "ເພີ່ມສິນຄ້າ",
+      "empty": "ຍັງບໍ່ມີສິນຄ້າ — ກົດປຸ່ມ \"ເພີ່ມສິນຄ້າ\" ເພື່ອເລີ່ມຕົ້ນ",
+      "columns": {
+        "sku": "ລະຫັດ (SKU)",
+        "name": "ຊື່ສິນຄ້າ",
+        "category": "ໝວດໝູ່",
+        "sellPrice": "ລາຄາຂາຍ",
+        "stock": "ຄົງເຫຼືອ",
+        "actions": "ການຈັດການ"
+      },
+      "actions": {
+        "edit": "ແກ້ໄຂ",
+        "delete": "ລຶບ",
+        "deleteConfirm": "ຢືນຢັນການລຶບສິນຄ້ານີ້?"
+      },
+      "form": {
+        "createTitle": "ເພີ່ມສິນຄ້າໃໝ່",
+        "editTitle": "ແກ້ໄຂສິນຄ້າ",
+        "back": "← ກັບຄືນ",
+        "sku": "ລະຫັດສິນຄ້າ (SKU)",
+        "skuHint": "ໃຊ້ເປັນເອກະລັກສະເພາະຂອງສິນຄ້າໃນຮ້ານ",
+        "barcode": "ບາໂຄດ (ຖ້າມີ)",
+        "name": "ຊື່ສິນຄ້າ",
+        "namePlaceholder": "ຕົວຢ່າງ ນ້ຳເປົ່າ 600 ມລ.",
+        "description": "ລາຍລະອຽດ",
+        "category": "ໝວດໝູ່",
+        "categoryNone": "— ບໍ່ມີໝວດໝູ່ —",
+        "unitLabel": "ຫົວໜ່ວຍ",
+        "unitPlaceholder": "ຕົວຢ່າງ ອັນ, ກກ, ຂວດ",
+        "currency": "ສະກຸນເງິນ",
+        "costPrice": "ຕົ້ນທຶນ",
+        "sellPrice": "ລາຄາຂາຍ",
+        "trackStock": "ຕິດຕາມສະຕັອກ",
+        "stockOnHand": "ຄົງເຫຼືອ",
+        "isActive": "ເປີດຂາຍ",
+        "submitCreate": "ບັນທຶກສິນຄ້າ",
+        "submitUpdate": "ອັບເດດສິນຄ້າ",
+        "submitting": "ກຳລັງບັນທຶກ...",
+        "errors": {
+          "skuTaken": "ລະຫັດ SKU ນີ້ຖືກໃຊ້ແລ້ວ",
+          "barcodeTaken": "ບາໂຄດນີ້ຖືກໃຊ້ແລ້ວ",
+          "invalidInput": "ຂໍ້ມູນທີ່ໃສ່ບໍ່ຖືກຕ້ອງ ກະລຸນາກວດສອບອີກຄັ້ງ",
+          "internal": "ເກີດຂໍ້ຜິດພາດຂອງລະບົບ ກະລຸນາລອງໃໝ່",
+          "notFound": "ບໍ່ພົບສິນຄ້ານີ້"
+        }
+      }
+    },
+    "categories": {
+      "title": "ໝວດໝູ່ສິນຄ້າ",
+      "subtitle": "ຈັດກຸ່ມສິນຄ້າໃຫ້ຄົ້ນຫາງ່າຍ",
+      "empty": "ຍັງບໍ່ມີໝວດໝູ່ — ເພີ່ມໝວດໝູ່ດ້ານລຸ່ມ",
+      "addTitle": "ເພີ່ມໝວດໝູ່",
+      "name": "ຊື່ໝວດໝູ່",
+      "namePlaceholder": "ຕົວຢ່າງ ເຄື່ອງດື່ມ",
+      "description": "ລາຍລະອຽດ",
+      "submit": "ເພີ່ມ",
+      "submitting": "ກຳລັງເພີ່ມ...",
+      "delete": "ລຶບ",
+      "deleteConfirm": "ຢືນຢັນການລຶບໝວດໝູ່ນີ້?",
+      "errors": {
+        "nameTaken": "ຊື່ໝວດໝູ່ນີ້ມີຢູ່ແລ້ວ",
+        "invalidInput": "ຂໍ້ມູນທີ່ໃສ່ບໍ່ຖືກຕ້ອງ",
+        "internal": "ເກີດຂໍ້ຜິດພາດຂອງລະບົບ"
+      }
     }
   }
 }

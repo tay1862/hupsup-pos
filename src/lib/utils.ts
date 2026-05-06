@@ -25,8 +25,35 @@ export function slugify(input: string): string {
 }
 
 /**
+ * Format a money amount for display — accepts either a `numeric(18,4)` string
+ * straight from Drizzle or a JS number. The string path is processed
+ * lexically so we don't lose precision on large LAK values that exceed
+ * `Number.MAX_SAFE_INTEGER`. Trailing zeros after the decimal are stripped.
+ *
+ * Per `AGENTS.md`: never round-trip persisted money through JS floats.
+ */
+export function formatMoney(
+  value: string | number | null | undefined,
+  currency = "LAK",
+): string {
+  if (value === null || value === undefined || value === "") return "-";
+  const raw = typeof value === "number" ? value.toString() : value;
+  const match = raw.match(/^(-?)(\d+)(?:\.(\d+))?$/);
+  if (!match) return raw;
+  const sign = match[1];
+  const intDigits = match[2];
+  const fracDigits = (match[3] ?? "").slice(0, 4).replace(/0+$/, "");
+  const intWithSeparators = intDigits.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  const formatted = fracDigits
+    ? `${sign}${intWithSeparators}.${fracDigits}`
+    : `${sign}${intWithSeparators}`;
+  return `${formatted} ${currency}`;
+}
+
+/**
  * Generate a short unique suffix to append to slugs when collisions occur.
  */
+
 export function randomSuffix(length = 6): string {
   const alphabet = "abcdefghijklmnopqrstuvwxyz0123456789";
   let out = "";
