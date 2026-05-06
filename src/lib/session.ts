@@ -2,7 +2,8 @@
  * Server-side session helpers for protected routes.
  */
 
-import { redirect } from "next/navigation";
+import { getLocale } from "next-intl/server";
+import { redirect } from "@/i18n/navigation";
 import { auth } from "./auth";
 import type { Role } from "@/db/schema";
 
@@ -18,22 +19,30 @@ export type ActiveSession = {
 /**
  * Require an authenticated session with an active organization membership.
  * Redirects to /sign-in (or /register if logged in but org-less) otherwise.
+ *
+ * Uses the locale-aware `redirect` from `@/i18n/navigation` so a user on
+ * `/lo/dashboard` is bounced to `/lo/sign-in`, not `/sign-in`.
  */
 export async function requireActiveSession(): Promise<ActiveSession> {
   const session = await auth();
-  if (!session?.user?.id) {
-    redirect("/sign-in");
+  const locale = await getLocale();
+  const user = session?.user;
+  if (!user?.id) {
+    redirect({ href: "/sign-in", locale });
+    // `redirect` throws, but its return type isn't `never`, so narrow manually.
+    throw new Error("unreachable");
   }
-  if (!session.user.orgId || !session.user.role) {
+  if (!user.orgId || !user.role) {
     // Logged in but never finished registration — bounce to register flow.
-    redirect("/register");
+    redirect({ href: "/register", locale });
+    throw new Error("unreachable");
   }
   return {
-    userId: session.user.id,
-    email: session.user.email ?? null,
-    name: session.user.name ?? null,
-    orgId: session.user.orgId,
-    role: session.user.role,
-    branchId: session.user.branchId,
+    userId: user.id,
+    email: user.email ?? null,
+    name: user.name ?? null,
+    orgId: user.orgId,
+    role: user.role,
+    branchId: user.branchId,
   };
 }
