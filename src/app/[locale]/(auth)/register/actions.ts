@@ -1,0 +1,192 @@
+"use server";
+
+import { z } from "zod";
+import bcrypt from "bcryptjs";
+import { eq } from "drizzle-orm";
+import { AuthError } from "next-auth";
+import { db } from "@/db";
+import {
+  branches,
+  memberships,
+  organizations,
+  users,
+  type BusinessType,
+} from "@/db/schema";
+import { signIn } from "@/lib/auth";
+import { randomSuffix, slugify } from "@/lib/utils";
+import type { RegisterState } from "./state";
+
+const schema = z.object({
+  orgName: z.string().trim().min(2).max(120),
+  businessType: z.enum(["RETAIL", "RESTAURANT", "SERVICE", "MIXED"]),
+  branchName: z.string().trim().min(1).max(120),
+  ownerName: z.string().trim().min(1).max(120),
+  ownerEmail: z.string().trim().toLowerCase().email().max(254),
+  ownerPassword: z.string().min(8).max(128),
+});
+
+/**
+ * Returns true if `err` is a Postgres unique-constraint violation
+ * (SQLSTATE 23505) against the named index/constraint. The check is loose by
+ * design — drivers expose the metadata in different shapes (`code`,
+ * `constraint`, `constraint_name`, message text), so we duck-type.
+ */
+function isUniqueViolation(err: unknown, indexName: string): boolean {
+  if (typeof err !== "object" || err === null) return false;
+  const e = err as {
+    code?: unknown;
+    constraint?: unknown;
+    constraint_name?: unknown;
+    message?: unknown;
+  };
+  const code = typeof e.code === "string" ? e.code : "";
+  if (code !== "23505") return false;
+  const constraint =
+    (typeof e.constraint === "string" && e.constraint) ||
+    (typeof e.constraint_name === "string" && e.constraint_name) ||
+    "";
+  if (constraint && constraint.includes(indexName)) return true;
+  const message = typeof e.message === "string" ? e.message : "";
+  return message.includes(indexName);
+}
+
+async function uniqueOrgSlug(name: string): Promise<string> {
+  const base = slugify(name);
+  for (let attempt = 0; attempt < 5; attempt += 1) {
+    const candidate = attempt === 0 ? base : `${base}-${randomSuffix(4)}`;
+    const [existing] = await db
+      .select({ id: organizations.id })
+      .from(organizations)
+      .where(eq(organizations.slug, candidate))
+      .limit(1);
+    if (!existing) return candidate;
+  }
+  return `${base}-${randomSuffix(8)}`;
+}
+
+export async function registerAction(
+  _prev: RegisterState,
+  formData: FormData,
+): Promise<RegisterState> {
+  const parsed = schema.safeParse({
+    orgName: formData.get("orgName"),
+    businessType: formData.get("businessType"),
+    branchName: formData.get("branchName"),
+    ownerName: formData.get("ownerName"),
+    ownerEmail: formData.get("ownerEmail"),
+    ownerPassword: formData.get("ownerPassword"),
+  });
+
+  if (!parsed.success) {
+    const fieldErrors: RegisterState["fieldErrors"] = {};
+    for (const issue of parsed.error.issues) {
+      const key = issue.path[0];
+      if (typeof key === "string") {
+        fieldErrors[key as keyof z.infer<typeof schema>] = issue.message;
+      }
+    }
+    return { error: "invalid_input", fieldErrors };
+  }
+
+  const data = parsed.data;
+
+  const [existing] = await db
+    .select({ id: users.id })
+    .from(users)
+    .where(eq(users.email, data.ownerEmail))
+    .limit(1);
+  if (existing) {
+    return { error: "email_taken" };
+  }
+
+  const passwordHash = await bcrypt.hash(data.ownerPassword, 10);
+  const businessType = data.businessType as BusinessType;
+
+  // Retry the whole transaction on slug-collision. uniqueOrgSlug picks a
+  // candidate via SELECT before the INSERT, but a concurrent registration
+  // can claim the same slug between those two statements and trip
+  // organizations_slug_idx (SQLSTATE 23505). On collision we regenerate and
+  // retry; bail with `internal` only after the retries are exhausted.
+  const MAX_SLUG_RETRIES = 3;
+  let txError: unknown = null;
+  let txSucceeded = false;
+  for (let attempt = 0; attempt < MAX_SLUG_RETRIES; attempt += 1) {
+    const slug = await uniqueOrgSlug(data.orgName);
+    try {
+      await db.transaction(async (tx) => {
+        const [org] = await tx
+          .insert(organizations)
+          .values({
+            name: data.orgName,
+            slug,
+            businessType,
+          })
+          .returning({ id: organizations.id });
+
+        const [branch] = await tx
+          .insert(branches)
+          .values({
+            orgId: org.id,
+            name: data.branchName,
+            code: "MAIN",
+          })
+          .returning({ id: branches.id });
+
+        const [user] = await tx
+          .insert(users)
+          .values({
+            name: data.ownerName,
+            email: data.ownerEmail,
+            passwordHash,
+          })
+          .returning({ id: users.id });
+
+        await tx.insert(memberships).values({
+          userId: user.id,
+          orgId: org.id,
+          branchId: branch.id,
+          role: "OWNER",
+        });
+      });
+      txSucceeded = true;
+      break;
+    } catch (err) {
+      // Email collision: deterministic, never resolves on retry.
+      if (isUniqueViolation(err, "users_email_idx")) {
+        return { error: "email_taken" };
+      }
+      // Slug collision: try again with a fresh randomised suffix.
+      if (isUniqueViolation(err, "organizations_slug_idx")) {
+        txError = err;
+        continue;
+      }
+      // Anything else: don't retry, surface internal.
+      console.error("[register] transaction failed", err);
+      return { error: "internal" };
+    }
+  }
+  if (!txSucceeded) {
+    console.error("[register] slug collision exhausted retries", txError);
+    return { error: "internal" };
+  }
+
+  // Sign the new owner in immediately so they land on /dashboard authenticated.
+  // signIn throws NEXT_REDIRECT on success (we re-throw to propagate); an
+  // AuthError here means the account was created but auto-sign-in failed, in
+  // which case we surface a generic error rather than a raw 500 — the user can
+  // sign in manually.
+  try {
+    await signIn("credentials", {
+      email: data.ownerEmail,
+      password: data.ownerPassword,
+      redirectTo: "/dashboard",
+    });
+    return {};
+  } catch (err) {
+    if (err instanceof AuthError) {
+      console.error("[register] auto-signin failed", err);
+      return { error: "internal" };
+    }
+    throw err;
+  }
+}

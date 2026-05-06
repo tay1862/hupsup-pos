@@ -12,6 +12,7 @@
     "settings": "Settings",
     "signIn": "Sign in",
     "signOut": "Sign out",
+    "register": "Register",
     "language": "Language"
   },
   "Landing": {
@@ -36,6 +37,69 @@
         "title": "Self-host on your VPS",
         "desc": "No vendor lock-in. Own your data 100%."
       }
+    }
+  },
+  "Auth": {
+    "signInTitle": "Sign in",
+    "signInSubtitle": "Welcome back — enter your email and password.",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Sign in",
+    "submitting": "Signing in...",
+    "noAccount": "Don't have an account?",
+    "registerLink": "Register here",
+    "haveAccount": "Already have an account?",
+    "signInLink": "Sign in here",
+    "invalidCredentials": "Invalid email or password.",
+    "signOut": "Sign out"
+  },
+  "Register": {
+    "title": "Register for HupSup POS",
+    "subtitle": "Create your shop and owner account in one step. Ready to use immediately.",
+    "orgSection": "Shop details",
+    "orgName": "Shop name",
+    "orgNamePlaceholder": "e.g. Som's Fried Chicken",
+    "businessType": "Business type",
+    "businessTypeRetail": "Retail",
+    "businessTypeRestaurant": "Restaurant / Café",
+    "businessTypeService": "Service business",
+    "businessTypeMixed": "Mixed",
+    "branchName": "First branch name",
+    "branchNamePlaceholder": "e.g. Main branch",
+    "ownerSection": "Owner account",
+    "ownerName": "Full name",
+    "ownerNamePlaceholder": "Full name",
+    "ownerEmail": "Email",
+    "ownerEmailPlaceholder": "you@example.com",
+    "ownerPassword": "Password (at least 8 characters)",
+    "submit": "Create my shop",
+    "submitting": "Creating...",
+    "errors": {
+      "emailTaken": "This email is already registered.",
+      "invalidInput": "Some fields are invalid. Please check and try again.",
+      "internal": "Something went wrong. Please try again."
+    }
+  },
+  "Dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome, {name}",
+    "orgLabel": "Shop",
+    "branchLabel": "Branch",
+    "roleLabel": "Role",
+    "comingSoon": "POS, inventory, and reports are coming soon.",
+    "navOverview": "Overview",
+    "navProducts": "Products",
+    "navPos": "Point of Sale",
+    "navReports": "Reports",
+    "navSettings": "Settings",
+    "roles": {
+      "OWNER": "Owner",
+      "MANAGER": "Manager",
+      "CASHIER": "Cashier",
+      "WAITER": "Waiter",
+      "KITCHEN": "Kitchen",
+      "STOCK": "Stock",
+      "ACCOUNTANT": "Accountant"
     }
   }
 }

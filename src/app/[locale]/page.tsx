@@ -1,4 +1,5 @@
 import { setRequestLocale, getTranslations } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 
 export default async function HomePage({
@@ -10,13 +11,28 @@ export default async function HomePage({
   setRequestLocale(locale);
   const t = await getTranslations("Landing");
   const tApp = await getTranslations("App");
+  const tNav = await getTranslations("Nav");
 
   return (
     <main className="flex flex-1 flex-col">
       <header className="border-b border-black/10 dark:border-white/10">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-6 py-4">
           <span className="text-lg font-semibold">{tApp("name")}</span>
-          <LocaleSwitcher />
+          <div className="flex items-center gap-3">
+            <Link
+              href="/sign-in"
+              className="text-foreground/70 hover:text-foreground hidden text-sm sm:inline"
+            >
+              {tNav("signIn")}
+            </Link>
+            <Link
+              href="/register"
+              className="bg-foreground text-background rounded-md px-3 py-1.5 text-sm font-medium hover:opacity-90"
+            >
+              {tNav("register")}
+            </Link>
+            <LocaleSwitcher />
+          </div>
         </div>
       </header>
 
@@ -28,12 +44,12 @@ export default async function HomePage({
           {t("heroSubtitle")}
         </p>
         <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
-          <a
-            href="#features"
+          <Link
+            href="/register"
             className="bg-foreground text-background rounded-md px-5 py-2.5 text-sm font-medium hover:opacity-90"
           >
             {t("ctaPrimary")}
-          </a>
+          </Link>
           <a
             href="#features"
             className="border-foreground/20 hover:bg-foreground/5 rounded-md border px-5 py-2.5 text-sm font-medium"
