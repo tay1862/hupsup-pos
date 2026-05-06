@@ -100,53 +100,73 @@ export async function registerAction(
   }
 
   const passwordHash = await bcrypt.hash(data.ownerPassword, 10);
-  const slug = await uniqueOrgSlug(data.orgName);
   const businessType = data.businessType as BusinessType;
 
-  try {
-    await db.transaction(async (tx) => {
-      const [org] = await tx
-        .insert(organizations)
-        .values({
-          name: data.orgName,
-          slug,
-          businessType,
-        })
-        .returning({ id: organizations.id });
+  // Retry the whole transaction on slug-collision. uniqueOrgSlug picks a
+  // candidate via SELECT before the INSERT, but a concurrent registration
+  // can claim the same slug between those two statements and trip
+  // organizations_slug_idx (SQLSTATE 23505). On collision we regenerate and
+  // retry; bail with `internal` only after the retries are exhausted.
+  const MAX_SLUG_RETRIES = 3;
+  let txError: unknown = null;
+  let txSucceeded = false;
+  for (let attempt = 0; attempt < MAX_SLUG_RETRIES; attempt += 1) {
+    const slug = await uniqueOrgSlug(data.orgName);
+    try {
+      await db.transaction(async (tx) => {
+        const [org] = await tx
+          .insert(organizations)
+          .values({
+            name: data.orgName,
+            slug,
+            businessType,
+          })
+          .returning({ id: organizations.id });
 
-      const [branch] = await tx
-        .insert(branches)
-        .values({
+        const [branch] = await tx
+          .insert(branches)
+          .values({
+            orgId: org.id,
+            name: data.branchName,
+            code: "MAIN",
+          })
+          .returning({ id: branches.id });
+
+        const [user] = await tx
+          .insert(users)
+          .values({
+            name: data.ownerName,
+            email: data.ownerEmail,
+            passwordHash,
+          })
+          .returning({ id: users.id });
+
+        await tx.insert(memberships).values({
+          userId: user.id,
           orgId: org.id,
-          name: data.branchName,
-          code: "MAIN",
-        })
-        .returning({ id: branches.id });
-
-      const [user] = await tx
-        .insert(users)
-        .values({
-          name: data.ownerName,
-          email: data.ownerEmail,
-          passwordHash,
-        })
-        .returning({ id: users.id });
-
-      await tx.insert(memberships).values({
-        userId: user.id,
-        orgId: org.id,
-        branchId: branch.id,
-        role: "OWNER",
+          branchId: branch.id,
+          role: "OWNER",
+        });
       });
-    });
-  } catch (err) {
-    // Catch the race where two concurrent registrations slip past the
-    // pre-check above and both try to insert the same email. Postgres surfaces
-    // unique-violation as SQLSTATE 23505.
-    if (isUniqueViolation(err, "users_email_idx")) {
-      return { error: "email_taken" };
+      txSucceeded = true;
+      break;
+    } catch (err) {
+      // Email collision: deterministic, never resolves on retry.
+      if (isUniqueViolation(err, "users_email_idx")) {
+        return { error: "email_taken" };
+      }
+      // Slug collision: try again with a fresh randomised suffix.
+      if (isUniqueViolation(err, "organizations_slug_idx")) {
+        txError = err;
+        continue;
+      }
+      // Anything else: don't retry, surface internal.
+      console.error("[register] transaction failed", err);
+      return { error: "internal" };
     }
-    console.error("[register] transaction failed", err);
+  }
+  if (!txSucceeded) {
+    console.error("[register] slug collision exhausted retries", txError);
     return { error: "internal" };
   }
 
